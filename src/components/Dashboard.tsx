@@ -1,19 +1,27 @@
 import React from 'react';
-import { ArrowUpRight, Clock, MapPin, Calculator } from 'lucide-react';
-import { PilotStats } from '../types';
+import { ArrowUpRight, Clock, MapPin, Calculator, FileText, AlertTriangle, CheckCircle2, Plane } from 'lucide-react';
+import { PilotStats, PilotPaper, Flight } from '../types';
 import { formatMinutesToHHmm, cn } from '../lib/utils';
 import { motion } from 'motion/react';
 
 interface DashboardProps {
   stats: PilotStats;
+  papers: PilotPaper[];
+  flights: Flight[];
 }
 
-export function Dashboard({ stats }: DashboardProps) {
+export function Dashboard({ stats, papers, flights }: DashboardProps) {
+  const getDaysRemaining = (expiryStr: string) => {
+    const expiry = new Date(expiryStr);
+    const today = new Date();
+    const diff = expiry.getTime() - today.getTime();
+    return Math.ceil(diff / (1000 * 3600 * 24));
+  };
   const cards = [
     { label: 'Total Flight Hours', value: stats.totalHours.toFixed(1), icon: Clock, color: 'text-blue-500', bg: 'bg-blue-500/10' },
-    { label: 'Total Flights Logged', value: stats.totalFlights, icon: ArrowUpRight, color: 'text-zinc-300', bg: 'bg-zinc-800/10' },
+    { label: 'Nautical Miles', value: stats.totalDistance.toString(), icon: ArrowUpRight, color: 'text-zinc-300', bg: 'bg-zinc-800/10' },
     { label: 'Successful Landings', value: stats.landings, icon: MapPin, color: 'text-emerald-500', bg: 'bg-emerald-500/10' },
-    { label: 'Simulator Sessions', value: '0.0', icon: Calculator, color: 'text-purple-500', bg: 'bg-purple-500/10' },
+    { label: 'Simulator/Total Flights', value: `${stats.simulatorSessions}/${stats.totalFlights}`, icon: Calculator, color: 'text-purple-500', bg: 'bg-purple-500/10' },
   ];
 
   return (
@@ -57,8 +65,8 @@ export function Dashboard({ stats }: DashboardProps) {
         ))}
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2 bg-zinc-900/50 border border-zinc-800 rounded-2xl p-8 relative overflow-hidden">
+      <div className="grid grid-cols-1 gap-6">
+        <div className="bg-zinc-900/50 border border-zinc-800 rounded-2xl p-8 relative overflow-hidden">
           <div className="flex justify-between items-center mb-8">
             <h3 className="text-lg font-bold text-white tracking-tight uppercase text-[12px] opacity-80">Mission History</h3>
             <div className="flex gap-2">
@@ -69,7 +77,7 @@ export function Dashboard({ stats }: DashboardProps) {
           </div>
           
           <div className="space-y-4">
-            {stats.totalFlights === 0 ? (
+            {flights.length === 0 ? (
               <div className="h-64 flex flex-col items-center justify-center text-center">
                 <div className="w-16 h-16 rounded-full bg-zinc-950 flex items-center justify-center mb-4 border border-zinc-900 shadow-inner">
                   <Clock className="w-6 h-6 text-zinc-700" />
@@ -77,35 +85,87 @@ export function Dashboard({ stats }: DashboardProps) {
                 <p className="text-zinc-500 font-mono text-xs uppercase tracking-widest">No active mission data found</p>
               </div>
             ) : (
-              <div className="space-y-4">
-                 {[1, 2, 3].map(i => (
-                   <div key={i} className="h-12 w-full bg-zinc-800/20 rounded-xl border border-white/5 flex items-center px-4 justify-between group hover:bg-zinc-800/40 transition-colors">
-                     <div className="flex items-center gap-4">
-                        <div className="w-1.5 h-1.5 rounded-full bg-blue-500"></div>
-                        <div className="h-4 w-24 bg-zinc-800 rounded animate-pulse opacity-40"></div>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                 {flights.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()).slice(0, 6).map((flight, i) => (
+                   <motion.div 
+                     key={flight.id} 
+                     initial={{ opacity: 0, y: 10 }}
+                     animate={{ opacity: 1, y: 0 }}
+                     transition={{ delay: i * 0.05 }}
+                     className="bg-zinc-950/50 rounded-xl border border-white/5 p-4 group hover:bg-zinc-800/40 transition-colors"
+                   >
+                     <div className="flex items-center justify-between mb-3">
+                        <div className="flex items-center gap-2">
+                          <Plane className="w-3.5 h-3.5 text-blue-500" />
+                          <span className="text-xs font-mono font-bold text-blue-400">{flight.aircraftReg}</span>
+                        </div>
+                        <span className="text-[10px] font-bold text-zinc-500 tracking-widest uppercase">{new Date(flight.date).toLocaleDateString()}</span>
                      </div>
-                     <div className="h-4 w-12 bg-zinc-800 rounded animate-pulse opacity-40"></div>
-                   </div>
+                     <div className="flex items-center justify-between">
+                       <div className="flex items-center gap-2 text-white font-bold text-sm">
+                         <span>{flight.from}</span>
+                         <span className="text-zinc-700">→</span>
+                         <span>{flight.to}</span>
+                       </div>
+                       <span className="text-xs font-mono text-white opacity-80">{formatMinutesToHHmm(flight.duration)}</span>
+                     </div>
+                   </motion.div>
                  ))}
-                 <p className="text-center text-[10px] text-zinc-600 font-bold uppercase tracking-[0.3em] mt-4">Telemetry Stream Partial</p>
               </div>
             )}
           </div>
         </div>
+      </div>
 
-        <div className="bg-zinc-900/50 border border-zinc-800 rounded-2xl p-8 flex flex-col">
-          <h3 className="text-lg font-bold text-white mb-8 tracking-tight uppercase text-[12px] opacity-80">Currency Diagnostics</h3>
-          <div className="space-y-10 flex-1 flex flex-col justify-center">
-            <CurrencyItem label="90-Day Night Landing" current={0} goal={3} unit="night" />
-            <CurrencyItem label="Instrument Proficiency" current={0} goal={6} unit="instr" />
-            <CurrencyItem label="VFR Landing Recency" current={stats.landings} goal={3} unit="day" />
-          </div>
-          <div className="mt-10 pt-6 border-t border-zinc-800/50">
-             <div className="flex items-center gap-2 text-[10px] font-bold text-emerald-500 uppercase tracking-widest">
-               <ArrowUpRight className="w-3 h-3" />
-               Performance Optimal
-             </div>
-          </div>
+      <div className="bg-zinc-900/50 border border-zinc-800 rounded-2xl p-8 overflow-hidden">
+        <div className="flex justify-between items-center mb-8">
+          <h3 className="text-lg font-bold text-white tracking-tight uppercase text-[12px] opacity-80 flex items-center gap-2">
+            <FileText className="w-4 h-4 text-blue-500" />
+            Pilot Papers & Credentials
+          </h3>
+          <span className="text-[10px] font-bold text-zinc-600 uppercase tracking-widest">{papers.length} ACTIVE</span>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {papers.map((paper, i) => {
+            const days = getDaysRemaining(paper.expiryDate);
+            const isExpired = days < 0;
+            const isUrgent = days < 30;
+
+            return (
+              <motion.div
+                key={paper.id}
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: i * 0.05 }}
+                className={cn(
+                  "p-4 rounded-xl border transition-all flex justify-between items-center",
+                  isExpired ? "border-rose-500/20 bg-rose-500/5" :
+                  isUrgent ? "border-amber-500/20 bg-amber-500/5" :
+                  "border-emerald-500/20 bg-emerald-500/5"
+                )}
+              >
+                <div className="space-y-1">
+                  <p className="text-sm font-semibold text-white">{paper.name}</p>
+                  <p className="text-[10px] font-mono text-zinc-500 uppercase">
+                    {isExpired ? `Expired ${Math.abs(days)}d ago` : `Expires in ${days} days`}
+                  </p>
+                </div>
+                {isExpired ? (
+                  <AlertTriangle className="w-5 h-5 text-rose-500" />
+                ) : isUrgent ? (
+                  <AlertTriangle className="w-5 h-5 text-amber-500" />
+                ) : (
+                  <CheckCircle2 className="w-5 h-5 text-emerald-500" />
+                )}
+              </motion.div>
+            );
+          })}
+          {papers.length === 0 && (
+            <div className="col-span-full py-8 text-center border-2 border-dashed border-zinc-800 rounded-2xl">
+              <p className="text-xs text-zinc-600 uppercase tracking-[0.2em] font-bold">No documentation clusters found</p>
+            </div>
+          )}
         </div>
       </div>
     </div>

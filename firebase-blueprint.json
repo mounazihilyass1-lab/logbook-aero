@@ -1,0 +1,51 @@
+{
+  "entities": {
+    "Flight": {
+      "title": "Flight",
+      "description": "A single flight log entry recorded by the pilot.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "userId": { "type": "string" },
+        "date": { "type": "string", "format": "date" },
+        "aircraftReg": { "type": "string" },
+        "aircraftType": { "type": "string" },
+        "from": { "type": "string" },
+        "to": { "type": "string" },
+        "departure": { "type": "string" },
+        "arrival": { "type": "string" },
+        "duration": { "type": "number", "description": "Duration in minutes" },
+        "landingsDay": { "type": "number" },
+        "landingsNight": { "type": "number" },
+        "picName": { "type": "string" },
+        "remarks": { "type": "string" },
+        "isSimulator": { "type": "boolean" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "userId", "date", "from", "to", "duration"]
+    },
+    "PilotPaper": {
+      "title": "Pilot Paper",
+      "description": "A certification or medical document for the pilot.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "userId": { "type": "string" },
+        "name": { "type": "string" },
+        "expiryDate": { "type": "string", "format": "date" }
+      },
+      "required": ["id", "userId", "name", "expiryDate"]
+    }
+  },
+  "firestore": {
+    "/flights/{flightId}": {
+      "schema": { "$ref": "#/entities/Flight" },
+      "description": "Global flights collection. Access restricted by userId field."
+    },
+    "/papers/{paperId}": {
+      "schema": { "$ref": "#/entities/PilotPaper" },
+      "description": "Global pilot papers collection. Access restricted by userId field."
+    }
+  }
+}

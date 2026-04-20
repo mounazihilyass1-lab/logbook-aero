@@ -1,0 +1,63 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // 0. Default Deny Catch-All
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Global Helpers
+    function isSignedIn() { return request.auth != null; }
+    function isOwner(userId) { return isSignedIn() && request.auth.uid == userId; }
+    function isValidId(id) { return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$'); }
+    function incoming() { return request.resource.data; }
+    function existing() { return resource.data; }
+    
+    function isAdmin() {
+      return isSignedIn() && (
+        request.auth.token.email.matches('.*admin@logbookpro.local.*') ||
+        (exists(/databases/$(database)/documents/profiles/$(request.auth.uid)) && 
+         get(/databases/$(database)/documents/profiles/$(request.auth.uid)).data.isAdmin == true)
+      );
+    }
+
+    // Profile Validation Blueprint
+    function isValidProfile(data) {
+      return data.keys().hasAll(['uid', 'name'])
+        && data.uid == request.auth.uid
+        && data.name is string;
+    }
+
+    // Profiles Collection
+    match /profiles/{userId} {
+      allow get: if isOwner(userId) || isAdmin();
+      allow list: if isAdmin();
+      
+      allow create: if isOwner(userId) && isValidProfile(incoming());
+      
+      allow update: if (isOwner(userId) || isAdmin()) && isValidProfile(incoming());
+      
+      allow delete: if isAdmin();
+    }
+
+    // Flights Collection
+    match /flights/{flightId} {
+      allow get: if isOwner(existing().userId) || isAdmin();
+      allow list: if (isSignedIn() && existing().userId == request.auth.uid) || isAdmin();
+      
+      allow create: if isSignedIn(); // Add proper validation later if needed
+      allow update: if isOwner(existing().userId) || isAdmin();
+      allow delete: if isOwner(existing().userId) || isAdmin();
+    }
+
+    // Papers Collection
+    match /papers/{paperId} {
+      allow get: if isOwner(existing().userId) || isAdmin();
+      allow list: if (isSignedIn() && existing().userId == request.auth.uid) || isAdmin();
+      
+      allow create: if isSignedIn(); // Add proper validation later if needed
+      allow update: if isOwner(existing().userId) || isAdmin();
+      allow delete: if isOwner(existing().userId) || isAdmin();
+    }
+  }
+}
