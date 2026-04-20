@@ -12,14 +12,15 @@ interface HistoryViewProps {
 export function HistoryView({ flights }: HistoryViewProps) {
   // Aggregate data for charts
   const monthlyData = flights.reduce((acc: any[], flight) => {
-    const month = new Date(flight.date).toLocaleString('default', { month: 'short' });
-    const existing = acc.find(d => d.name === month);
+    const d = new Date(flight.date);
+    const monthYear = d.toLocaleString('default', { month: 'short' }) + ' ' + d.getFullYear();
+    const existing = acc.find(item => item.name === monthYear);
     if (existing) {
       existing.hours += flight.duration / 60;
       existing.flights += 1;
       existing.distance += Number(flight.distance) || 0;
     } else {
-      acc.push({ name: month, hours: flight.duration / 60, flights: 1, distance: Number(flight.distance) || 0 });
+      acc.push({ name: monthYear, hours: flight.duration / 60, flights: 1, distance: Number(flight.distance) || 0 });
     }
     return acc;
   }, []).reverse();

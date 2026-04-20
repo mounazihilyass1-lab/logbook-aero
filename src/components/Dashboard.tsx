@@ -17,8 +17,11 @@ export function Dashboard({ stats, papers, flights }: DashboardProps) {
     const diff = expiry.getTime() - today.getTime();
     return Math.ceil(diff / (1000 * 3600 * 24));
   };
+  const totalH = Math.floor(stats.totalHours);
+  const totalM = Math.round((stats.totalHours - totalH) * 60);
+
   const cards = [
-    { label: 'Total Flight Hours', value: stats.totalHours.toFixed(1), icon: Clock, color: 'text-blue-500', bg: 'bg-blue-500/10' },
+    { label: 'Total Flight Time', value: `${totalH}h ${totalM}m`, icon: Clock, color: 'text-blue-500', bg: 'bg-blue-500/10' },
     { label: 'Nautical Miles', value: stats.totalDistance.toString(), icon: ArrowUpRight, color: 'text-zinc-300', bg: 'bg-zinc-800/10' },
     { label: 'Successful Landings', value: stats.landings, icon: MapPin, color: 'text-emerald-500', bg: 'bg-emerald-500/10' },
     { label: 'Simulator/Total Flights', value: `${stats.simulatorSessions}/${stats.totalFlights}`, icon: Calculator, color: 'text-purple-500', bg: 'bg-purple-500/10' },

@@ -34,9 +34,16 @@ export function LogEntryForm({ onSave, onClose, initialFlight }: LogEntryFormPro
     async function updateDistance() {
       if (formData.from?.length === 4 && formData.to?.length === 4) {
         try {
+          const fetchAirport = async (icao: string) => {
+            if (icao === 'GMMT') {
+              return [{ latitude: 33.5583, longitude: -7.4731, name: "Tit Mellil" }];
+            }
+            return await getAirportByIcao(icao);
+          };
+
           const [fromAirports, toAirports] = await Promise.all([
-            getAirportByIcao(formData.from),
-            getAirportByIcao(formData.to)
+            fetchAirport(formData.from),
+            fetchAirport(formData.to)
           ]);
 
           if (fromAirports?.length > 0 && toAirports?.length > 0) {
@@ -105,7 +112,7 @@ export function LogEntryForm({ onSave, onClose, initialFlight }: LogEntryFormPro
       <motion.div 
         initial={{ scale: 0.95, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
-        className="bg-[#09090b] border border-zinc-800 w-full max-w-2xl rounded-3xl overflow-hidden shadow-[0_0_50px_rgba(37,99,235,0.1)]"
+        className="bg-background border border-zinc-800 w-full max-w-2xl rounded-3xl overflow-hidden shadow-[0_0_50px_rgba(37,99,235,0.1)]"
       >
         <div className="p-6 border-b border-zinc-800 flex justify-between items-center bg-zinc-900/30">
           <div className="flex items-center gap-3">

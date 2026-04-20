@@ -92,8 +92,8 @@ export function Sidebar({ activeTab, setActiveTab, stats, papers, onSavePaper, o
           <div className="space-y-4">
             <div className="group cursor-default">
               <div className="flex items-end justify-between">
-                <span className="text-xs text-zinc-400 font-medium">Total Hours</span>
-                <span className="text-2xl font-light tracking-tighter text-white font-mono">{stats.totalHours.toFixed(1)}</span>
+                <span className="text-xs text-zinc-400 font-medium">Total Time</span>
+                <span className="text-xl font-light tracking-tighter text-white font-mono">{`${Math.floor(stats.totalHours)}h ${Math.round((stats.totalHours % 1) * 60)}m`}</span>
               </div>
               <div className="mt-2 h-1 w-full rounded-full bg-zinc-800 overflow-hidden">
                 <div 
@@ -105,11 +105,11 @@ export function Sidebar({ activeTab, setActiveTab, stats, papers, onSavePaper, o
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <p className="text-[9px] font-bold uppercase tracking-widest text-zinc-600">Night</p>
-                <p className="text-base font-medium text-zinc-300 font-mono">{stats.nightHours.toFixed(1)}</p>
+                <p className="text-sm font-medium text-zinc-300 font-mono">{`${Math.floor(stats.nightHours)}h ${Math.round((stats.nightHours % 1) * 60)}m`}</p>
               </div>
               <div>
                 <p className="text-[9px] font-bold uppercase tracking-widest text-zinc-600">Landings</p>
-                <p className="text-base font-medium text-zinc-300 font-mono">{stats.landings}</p>
+                <p className="text-sm font-medium text-zinc-300 font-mono">{stats.landings}</p>
               </div>
             </div>
           </div>

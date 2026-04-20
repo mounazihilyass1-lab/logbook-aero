@@ -88,6 +88,12 @@ export default function App() {
   const [pilotName, setPilotName] = useState('');
   const [authError, setAuthError] = useState('');
 
+  // Theme support
+  const [theme, setTheme] = useState('default');
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme);
+  }, [theme]);
+
   // Suffix to make simple logins work with Firebase Email Auth
   const LOGIN_SUFFIX = '@logbookpro.local';
   const getInternalEmail = (id: string) => id.includes('@') ? id : `${id.toLowerCase().trim()}${LOGIN_SUFFIX}`;
@@ -349,7 +355,7 @@ export default function App() {
   }
 
   return (
-    <div className="flex flex-col bg-[#09090b] min-h-screen text-zinc-300 antialiased font-sans">
+    <div className="flex flex-col bg-background min-h-screen text-zinc-300 antialiased font-sans">
       {/* Top Navigation */}
       <nav className="flex h-16 shrink-0 items-center justify-between border-b border-zinc-800 bg-zinc-900/50 px-4 md:px-6 sticky top-0 z-30 backdrop-blur-md">
         <div className="flex items-center gap-2 md:gap-3">
@@ -360,6 +366,20 @@ export default function App() {
           </div>
         </div>
         <div className="flex items-center gap-3 md:gap-6">
+          <div className="hidden sm:flex items-center">
+            <select
+              value={theme}
+              onChange={(e) => setTheme(e.target.value)}
+              className="bg-zinc-800/50 border border-zinc-700 text-zinc-300 text-[10px] uppercase font-bold tracking-widest rounded-md px-2 py-1 outline-none focus:border-blue-500 transition-colors"
+            >
+              <option value="default">Default</option>
+              <option value="funny">Funny</option>
+              <option value="cozy">Cozy</option>
+              <option value="military">Military</option>
+              <option value="moroccan">Moroccan</option>
+              <option value="attractive">Attractive</option>
+            </select>
+          </div>
           <div className="hidden xs:flex items-center gap-2 rounded-full border border-blue-500/20 bg-blue-500/10 px-2 md:px-3 py-1 text-[9px] md:text-[11px] font-mono font-medium text-blue-400">
             <span className="h-1 w-1 md:h-1.5 md:w-1.5 rounded-full bg-blue-500 shadow-[0_0_8px_rgba(59,130,246,0.6)] animate-pulse"></span>
             <span className="hidden md:inline">CLOUDSYNC ACTIVE</span>

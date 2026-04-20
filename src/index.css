@@ -1,16 +1,117 @@
 @import "tailwindcss";
 
 @theme {
-  --color-background: #09090b;
-  --color-foreground: #f4f4f5;
+  --color-background: var(--bg-main, #09090b);
+  --color-foreground: var(--text-main, #f4f4f5);
   
-  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-  --font-mono: 'JetBrains Mono', 'Fira Code', 'Roboto Mono', monospace;
+  --color-zinc-950: var(--bg-darker, #09090b);
+  --color-zinc-900: var(--bg-dark, #18181b);
+  --color-zinc-800: var(--bg-border, #27272a);
+  --color-zinc-700: var(--bg-hover, #3f3f46);
+  --color-zinc-600: var(--text-muted, #52525b);
+  --color-zinc-500: var(--text-medium, #71717a);
+  --color-zinc-400: var(--text-light, #a1a1aa);
+  --color-zinc-300: var(--text-main, #d4d4d8);
+  --color-zinc-200: var(--text-bright, #e4e4e7);
+
+  --color-blue-400: var(--accent-light, #60a5fa);
+  --color-blue-500: var(--accent-main, #3b82f6);
+  --color-blue-600: var(--accent-dark, #2563eb);
+  
+  --font-sans: var(--font-primary, 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif);
+  --font-mono: var(--font-secondary, 'JetBrains Mono', 'Fira Code', 'Roboto Mono', monospace);
+}
+
+[data-theme="military"] {
+  --bg-main: #191c13;
+  --bg-darker: #13150e;
+  --bg-dark: #212818;
+  --bg-border: #333d26;
+  --bg-hover: #455234;
+  --text-muted: #5e6b4c;
+  --text-medium: #788762;
+  --text-light: #94a37e;
+  --text-main: #a1a196;
+  --text-bright: #b8c7a3;
+  --accent-light: #8b9e73;
+  --accent-main: #657548;
+  --accent-dark: #4b5936;
+  --font-primary: 'Courier New', Courier, monospace;
+}
+
+[data-theme="funny"] {
+  --bg-main: #ffebf0;
+  --bg-darker: #ffd1df;
+  --bg-dark: #ffb8cd;
+  --bg-border: #ff99b8;
+  --bg-hover: #ff7aa3;
+  --text-muted: #c94672;
+  --text-medium: #a33257;
+  --text-light: #7c1f3d;
+  --text-main: #541124;
+  --text-bright: #2e0510;
+  --accent-light: #ff85a3;
+  --accent-main: #ff4081;
+  --accent-dark: #cc3366;
+  --font-primary: '"Comic Sans MS", "Chalkboard SE", cursive';
+  --font-secondary: '"Comic Sans MS", "Chalkboard SE", cursive';
+}
+
+[data-theme="cozy"] {
+  --bg-main: #f5ece3;
+  --bg-darker: #e6d8c8;
+  --bg-dark: #d6c3ae;
+  --bg-border: #c4ad95;
+  --bg-hover: #b0967a;
+  --text-muted: #8c735c;
+  --text-medium: #735942;
+  --text-light: #59412b;
+  --text-main: #402c17;
+  --text-bright: #26190a;
+  --accent-light: #e89b80;
+  --accent-main: #d1755a;
+  --accent-dark: #a85942;
+  --font-primary: 'Georgia, serif';
+}
+
+[data-theme="moroccan"] {
+  --bg-main: #1a0f05;
+  --bg-darker: #120a03;
+  --bg-dark: #2b1a0a;
+  --bg-border: #4d2b12;
+  --bg-hover: #733f19;
+  --text-muted: #995522;
+  --text-medium: #bf6a2a;
+  --text-light: #d98c53;
+  --text-main: #e6af80;
+  --text-bright: #f2cca6;
+  --accent-light: #33b3b3;
+  --accent-main: #0a8a8a;
+  --accent-dark: #006666;
+  --font-primary: 'Palatino, serif';
+}
+
+[data-theme="attractive"] {
+  --bg-main: #05051a;
+  --bg-darker: #03030d;
+  --bg-dark: #0f0f33;
+  --bg-border: #1a1a4c;
+  --bg-hover: #262666;
+  --text-muted: #5e5e99;
+  --text-medium: #7a7acc;
+  --text-light: #9999e6;
+  --text-main: #ccccff;
+  --text-bright: #e6e6ff;
+  --accent-light: #ff66e6;
+  --accent-main: #e600b3;
+  --accent-dark: #b30086;
+  --font-primary: 'Helvetica Neue, Helvetica, sans-serif';
 }
 
 body {
   background-color: var(--color-background);
   color: var(--color-foreground);
+  font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
