@@ -1,0 +1,6 @@
+{
+  "name": "AeroLog",
+  "description": "A professional digital logbook for pilots with real-time synchronization and flight analytics.",
+  "requestFramePermissions": [],
+  "majorCapabilities": []
+}
